@@ -169,11 +169,6 @@ ISEA-Phase3-TezpurUniversity-Assignment7/
 
 ├── server.py
 ├── client_gui.py
-├── users.json
-├── server_log.txt
-├── security_log.txt
-├── chat_history.csv
-├── performance_results.csv
 ├── report.pdf
 ├── README.md
 └── screenshots/
