@@ -1,187 +1,317 @@
-# Secure GUI-Based Multi-Client Chat Application Using TCP
+# Application Optimization, Scalability and Reliability using TCP
 
-## Assignment 7
+## Assignment 8
 
 ### Submitted By
 
-**Deepak Singh Rawat**\
-**Enrollment No.: UU2409000093**\
-**Program:** BCA\
+**Deepak Singh Rawat**  
+**Enrollment No.: UU2409000093**  
+**Program:** BCA  
 **University:** Uttaranchal University
 
 ### Submitted To
 
-**ISEA Summer Internship 2026**\
-**ISEA under MeitY**\
+**ISEA Summer Internship 2026**  
+**ISEA under MeitY**  
 *(In affiliation with Tezpur University, Assam)*
 
-------------------------------------------------------------------------
+---
 
 # Project Title
 
-**Secure GUI-Based Multi-Client Chat Application Using TCP with Advanced Authentication and Session Hardening**
+**Application Optimization, Scalability and Reliability Enhancement of GUI-Based Multi-Client Chat Application Using TCP**
 
-------------------------------------------------------------------------
+---
 
 # Objective
 
-This project upgrades the GUI-based Multi-Client TCP Chat Application from Assignment 6 into a secure, hardened application. It implements robust security patterns to protect user accounts, restrict unauthorized access, and record system events securely. 
+This project enhances the secure GUI-based multi-client TCP chat application developed in Assignment 7 by improving its scalability, reliability, maintainability, and overall software quality while preserving the existing client-server architecture.
 
-Key security implementations include:
-1. **User Authentication & Secure Storage**: Password authentication verified against SHA-256 hashes stored locally in `users.json` (passwords are never saved or managed in plaintext).
-2. **Duplicate Login Prevention**: Rejects simultaneous active sessions for the same username.
-3. **Input Validation**: Strict client and server-side validation rejecting empty, overly long, or non-alphanumeric usernames.
-4. **Brute Force Lockout Protection**: Automatically locks out IP addresses for 30 seconds after 5 consecutive failed login attempts.
-5. **Secure Local Logging**: Comprehensive tracking of network connections, authentications, lockouts, and disconnections inside dedicated, sanitized log files (`server_log.txt` and `security_log.txt`) without exposing sensitive user credentials.
-6. **Protocol Analysis**: Verification of network handshakes and protocol boundary behavior in Mininet using Wireshark packet capture.
+The implementation focuses on efficient connection management, automatic recovery from failures, configurable application settings, optimized resource utilization, and performance evaluation under increasing client loads.
 
-------------------------------------------------------------------------
+---
+
+# Key Enhancements
+
+## 1. Connection Management
+
+- Automatic detection of disconnected clients
+- Removal of inactive sessions
+- Proper socket cleanup and resource release
+- Live online user synchronization
+- Meaningful error notifications
+
+## 2. Reliability Enhancement
+
+- Graceful client disconnect
+- Automatic session timeout handling
+- Improved exception handling
+- Reliable message delivery
+- Stable client-server communication
+
+## 3. Scalability Enhancement
+
+- Supports up to **10 concurrent clients**
+- Optimized multithreaded server architecture
+- Dynamic client management
+- Efficient message routing
+- Reduced server overhead
+
+## 4. Configuration Management
+
+All configurable parameters have been moved into **config.json**, including:
+
+- Server IP
+- Server Port
+- Session Timeout
+- Lockout Duration
+- Maximum Failed Login Attempts
+- Username Validation
+- Maximum Message Length
+- Log File Locations
+
+---
 
 # Software Requirements
 
 - Ubuntu 22.04 LTS / 24.04 LTS
 - Python 3.x
+- Tkinter
+- Socket Programming
+- Multithreading
+- JSON
 - Mininet
 - Wireshark
-- Tkinter (Python GUI)
-- Socket Programming & Multithreading modules
-- Cryptographic Hashing (Python `hashlib` module)
-- JSON (for database storage)
-- Git & GitHub
+- Git
+- GitHub
 
-------------------------------------------------------------------------
+---
 
 # Network Topology
 
-                    +------------------+
-                    |      Switch      |
-                    |        s1        |
-                    +------------------+
-                       |  |  |  |  |
-                      h1 h2 h3 h4 h5
+```
+               +-------------------+
+               |      Switch s1    |
+               +-------------------+
+      |     |     |     |     |     |     |     |     |     |
+     h1    h2    h3    h4    h5    h6    h7    h8    h9   h10   h11
 
-    h1 : Chat Server & Secure Database
-    h2 : Client A (Alice)
-    h3 : Client B (Bob)
-    h4 : Client C
-    h5 : Client D
+h1  -> Server
+h2-h11 -> Clients
+```
 
-### Mininet Command
+---
 
-``` bash
-sudo mn --topo single,5
-Connectivity Verification
-Bash
+# Mininet Command
+
+```bash
+sudo mn --topo single,11
+```
+
+---
+
+# Connectivity Verification
+
+```bash
 nodes
 net
 pingall
+```
 
-Execution Steps:
+---
 
-1. Start Mininet
-Bash
-sudo mn --topo single,5
+# Execution Steps
 
-2. Open Terminals
-Bash
-mininet> xterm h1 h2 h3
+## 1. Start Mininet
 
-3. Start the Server (on Host h1)
-Bash
+```bash
+sudo mn --topo single,11
+```
+
+---
+
+## 2. Open Terminal Windows
+
+```bash
+xterm h1
+```
+
+For five clients
+
+```bash
+xterm h2 h3 h4 h5 h6
+```
+
+For eight clients
+
+```bash
+xterm h2 h3 h4 h5 h6 h7 h8 h9
+```
+
+For ten clients
+
+```bash
+xterm h2 h3 h4 h5 h6 h7 h8 h9 h10 h11
+```
+
+---
+
+## 3. Start Server
+
+```bash
 python3 server.py
+```
 
-4. Start the GUI Clients (on Hosts h2 and h3)
-Bash
+---
+
+## 4. Start GUI Clients
+
+```bash
 python3 client_gui.py
+```
 
-5. Verify Security Implementations
-Secure Storage Check: Open a separate terminal on your Ubuntu host and run cat users.json to verify that passwords are encrypted using 64-character SHA-256 hashes.
+---
 
-Duplicate Login Check: Log in as alice on Host h2. Attempt to log in as alice again on Host h3. Verify that the second client displays an error popup.
+## 5. Performance Testing
 
-Input Validation Check: Attempt to register/log in with special characters in the username. Check that the client rejects the request.
+Perform testing using:
 
-Failed Login Protection Check: Attempt to log in with the correct username but an incorrect password 5 consecutive times to trigger and verify the lockout popup.
+- 5 Clients
+- 8 Clients
+- 10 Clients
 
-6. Capture Network Traffic via Wireshark
-Launch Wireshark as root from your main host terminal:
+Performance metrics collected:
 
-Bash
+- Delay (Latency)
+- Throughput
+- CPU Usage
+- Memory Usage
+
+Results are automatically stored in:
+
+```
+performance_results.csv
+```
+
+Graphs are generated inside
+
+```
+graphs/
+```
+
+---
+
+## 6. Wireshark Verification
+
+Launch Wireshark
+
+```bash
 sudo wireshark &
-Select the any or loopback lo interface to capture virtual Mininet traffic.
+```
 
-Apply the display filter:
+Apply filter
 
-Plaintext
+```
 tcp.port == 5000
-Perform chat operations and capture the network payloads. Follow the TCP stream (Right-click a packet -> Follow -> TCP Stream) to view the connection flow.
+```
 
-Assignment Questions & Answers:
-Q1. Explain the difference between authentication and authorization.
-Authentication is the process of verifying who a user is (e.g., checking their credentials during login to confirm identity).
+Verify
 
-Authorization is the process of verifying what an authenticated user is allowed to do (e.g., granting permissions to send private messages, view specific logs, or access admin commands).
+- TCP Three-way Handshake
+- Message Transfer
+- Session Termination
+- Connection Timeout
+- TCP FIN/ACK packets
 
-Q2. Why should passwords never be stored in plain text?
-Storing passwords in plain text leaves them completely exposed. If an attacker gains unauthorized access to the database or if a system administrator views the files, every user account is immediately compromised. Additionally, because users frequently reuse their passwords across multiple sites, a leak on one system puts their accounts on other platforms at risk.
+---
 
-Q3. What is the purpose of password hashing?
-Password hashing uses a one-way mathematical algorithm to convert plaintext passwords into a fixed-length, irreversible string of characters (a hash). Since hashes are mathematically impossible to reverse back into plaintext, the server can safely verify a login by comparing the hash of the entered password with the stored hash, ensuring that even if the database is leaked, the actual passwords remain hidden.
+# Performance Improvements
 
-Q4. How duplicate login prevention improves security?
-It stops session hijacking and unauthorized account sharing. If an attacker steals a user's active credentials, they cannot log in and eavesdrop on private messages or impersonate them while the legitimate user is online. It also alerts the legitimate user immediately; if they see an "already online" error when trying to log in, they instantly know their credentials have been compromised.
+Compared with Assignment 7, the optimized application provides:
 
-Q5. Suggest two additional security improvements for your application.
-Transport Layer Encryption (SSL/TLS): Wrapping the raw TCP socket connection in SSL/TLS. This encrypts all transit data, preventing attackers from reading raw usernames, passwords, and chat messages using packet-sniffing tools like Wireshark.
+- Better resource utilization
+- Improved thread management
+- Automatic removal of inactive users
+- Stable communication under heavy load
+- Faster recovery after disconnections
+- Configurable server settings
+- Improved maintainability
 
-Salted Hashing: Adding a unique, random string of characters (a "salt") to each password before hashing it. This prevents attackers from using precomputed lookup tables (Rainbow Tables) to crack identical passwords across the database.
+---
 
-Sample Screenshots:
-The following verification screenshots are saved inside the screenshots/ directory:
+# Testing Summary
 
--UserAuthentication_And_SecurePassStorage.png: Verifies that user database credentials are encrypted securely using SHA-256 signatures instead of plaintext.
+| Test Case | Expected Result | Status |
+|------------|-----------------|--------|
+| Server starts successfully | Server accepts connections | ✅ Pass |
+| Five clients connected | Stable communication | ✅ Pass |
+| Eight clients connected | Stable communication | ✅ Pass |
+| Ten clients connected | No crashes | ✅ Pass |
+| Broadcast messaging | Delivered successfully | ✅ Pass |
+| Private messaging | Delivered correctly | ✅ Pass |
+| Client disconnection | Removed automatically | ✅ Pass |
+| Session timeout | User disconnected automatically | ✅ Pass |
+| Exception handling | Application continues running | ✅ Pass |
+| Configuration loading | Loaded from config.json | ✅ Pass |
 
--DuplicateLoginPrevention.png: Displays the rejection alert pop-up when attempting a concurrent active login.
+---
 
--InputValidation.png: Shows the system interface blocking malformed or improperly formatted user input payloads.
+# Repository Structure
 
--FailedLogInProtection.png: Documents the triggered client-side window block following continuous security authentication errors.
-
--SessionManagament_SecureLogin.png: Proves system transactions and user connection records are securely maintained in server logfiles.
-
--ConnectionSetup(TheThreeWayHandshake).png: Displays the baseline TCP protocol handshake initialization captured in Wireshark.
-
--Connection(TheThreeWayHandshake).png: Highlights the established socket streams tracking raw network frames.
-
--AuthenticatedCommunication.png: Captures active data payload transfers over Port 5000 streams.
-
--FailedLogIn.png: Displays Wireshark packets reflecting rejected credential transmissions.
-
--Logout.png: Verifies the final TCP tear-down packet flow closing down the host socket cleanly.
-
-Brief Description of the Implementation:
--The application builds on top of the robust client-server TCP architecture developed in Assignment 6. The core socket communication and multithreaded message handling remain, while a new security layer protects both the data-at-rest and state-in-transit.
-
--The server checks credentials using secure hashed verification. The application state prevents double sessions by tracking connected sockets in a synchronized hash map. Brute-force detection tracks failed login attempts mapped to client IP addresses, applying an automated rate-limiting lockout of 30 seconds upon the 5th consecutive failure. Logging processes are completely sanitized: critical connection changes, failed login details, and lockouts are saved to independent logs on the server side without printing raw input fields. The application also logs transaction traces into dedicated CSV sheets for historical record maintenance.
-
-Repository Structure:
-ISEA-Phase3-TezpurUniversity-Assignment7/
+```
+ISEA-Phase3-TezpurUniversity-Assignment8/
 
 ├── server.py
 ├── client_gui.py
+├── config.json
+├── users.json
+├── performance_results.csv
+├── graphs/
+│   ├── delay_graph.png
+│   ├── throughput_graph.png
+│   ├── cpu_usage_graph.png
+│   └── memory_usage_graph.png
+├── screenshots/
 ├── report.pdf
-├── README.md
-└── screenshots/
-    ├── UserAuthentication_And_SecurePassStorage.png
-    ├── DuplicateLoginPrevention.png
-    ├── InputValidation.png
-    ├── FailedLogInProtection.png
-    ├── SessionManagament_SecureLogin.png
-    ├── ConnectionSetup(TheThreeWayHandshake).png
-    ├── Connection(TheThreeWayHandshake).png
-    ├── AuthenticatedCommunication.png
-    ├── FailedLogIn.png
-    └── Logout.png
+└── README.md
+```
 
-Conclusion
-This assignment successfully demonstrates how to design and secure a multi-client TCP network chat application. By introducing industry-standard security mechanisms—such as SHA-256 cryptographic hashing, duplicate-login boundaries, automated IP-lockout thresholds, sanitized system logs, and input validation—the system is hardened against common security threats like brute-force guessing and session hijacking. The entire implementation was validated inside Mininet, with transit packet behaviors verified and inspected using Wireshark.
+---
+
+# Sample Screenshots
+
+The `screenshots/` directory contains experimental evidence including:
+
+- Mininet topology
+- Pingall verification
+- Five client execution
+- Eight client execution
+- Ten client execution
+- Chat communication
+- Client disconnection
+- Session timeout
+- Configuration management
+- Performance graphs
+- Wireshark TCP capture
+- GitHub repository update
+
+---
+
+# Technologies Used
+
+- Python
+- Socket Programming
+- Multithreading
+- Tkinter
+- JSON
+- CSV
+- Mininet
+- Wireshark
+- Git
+- GitHub
+
+---
+
+# Conclusion
+
+Assignment 8 successfully improves the secure multi-client TCP chat application by introducing scalability enhancements, reliable connection management, automatic timeout handling, better exception handling, centralized configuration management, and performance evaluation. The optimized implementation supports up to ten concurrent clients while maintaining stable communication, efficient resource management, and improved software quality. Experimental evaluation using Mininet and Wireshark verifies the correctness and reliability of the optimized system.
